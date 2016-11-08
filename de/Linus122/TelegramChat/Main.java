@@ -31,7 +31,7 @@ import de.Linus122.TelegramComponents.Chat;
 
 
 public class Main extends JavaPlugin implements Listener{
-	File datad = new File("plugins/TelegramChat/data.json");
+	public static File datad = new File("plugins/TelegramChat/data.json");
 	public static FileConfiguration cfg;
 	
 	public static Data data = new Data();
@@ -69,8 +69,7 @@ public class Main extends JavaPlugin implements Listener{
 			}
 		}, 20L, 20L);
 	}
-	@Override
-	public void onDisable(){
+	public static void save(){
 		Gson gson = new Gson();
 		
 		try {
@@ -85,12 +84,16 @@ public class Main extends JavaPlugin implements Listener{
 			e.printStackTrace();
 		}
 	}
+	@Override
+	public void onDisable(){
+		save();
+	}
 	public static void sendToMC(UUID uuid, String msg, int sender){
 		OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
 		List<Integer> recievers = new ArrayList<Integer>();
 		recievers.addAll(Main.data.ids);
 		recievers.remove((Object) sender);
-		String msgF = Main.cfg.getString("chat-format").replace('&', '§').replace("%player%", op.getName()).replace("%message%", msg);
+		String msgF = Main.cfg.getString("chat-format").replace('&', 'ï¿½').replace("%player%", op.getName()).replace("%message%", msg);
 		for(int id : recievers){
 			Telegram.sendMsg(id, msgF);
 		}

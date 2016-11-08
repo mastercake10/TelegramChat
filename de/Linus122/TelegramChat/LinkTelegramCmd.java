@@ -12,24 +12,24 @@ public class LinkTelegramCmd implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender cs, Command arg1, String arg2, String[] args) {
 		if(!(cs instanceof Player)){
-			cs.sendMessage("§cSorry, but you can't link the console currently.");
+			cs.sendMessage("Â§cSorry, but you can't link the console currently.");
 		}
 		if(!cs.hasPermission("telegram.linktelegram")){
-			cs.sendMessage("§cYou don't have permissions to use this!");
+			cs.sendMessage("Â§cYou don't have permissions to use this!");
 			return true;
 		}
 		if(Main.data == null){
 			Main.data = new Data();
 		}
 		if(Telegram.authJson == null){
-			cs.sendMessage("§cPlease add a bot to your server first! /telegram");
+			cs.sendMessage("Â§cPlease add a bot to your server first! /telegram");
 			return true;
 		}
 		
 		String token = Main.generateLinkToken();
 		Main.data.linkCodes.put(token, ((Player) cs).getUniqueId());
-		cs.sendMessage("§aAdd " + Telegram.authJson.getAsJsonObject("result").get("username").getAsString() + " to Telegram and send this message to " + Telegram.authJson.getAsJsonObject("result").get("username").getAsString() + ":");
-		cs.sendMessage("§c" + token);
+		cs.sendMessage("Â§aAdd " + Telegram.authJson.getAsJsonObject("result").get("username").getAsString() + " to Telegram and send this message to " + Telegram.authJson.getAsJsonObject("result").get("username").getAsString() + ":");
+		cs.sendMessage("Â§c" + token);
 		
 		return true;
 	}
