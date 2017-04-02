@@ -156,6 +156,7 @@ public class Main extends JavaPlugin implements Listener{
 	}
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e){
+		if(!this.getConfig().getBoolean("enable-chatmessages")) return;
 		if(Telegram.connected){
 			Chat chat = new Chat();
 			chat.parse_mode = "Markdown";

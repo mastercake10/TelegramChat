@@ -1,3 +1,4 @@
 chat-format: '&c[Telegram]&r %player%: %message%'
 enable-joinquitmessages: true
 enable-deathmessages: true
+enable-chatmessages: true
