@@ -19,14 +19,19 @@ import de.Linus122.TelegramComponents.Chat;
 
 
 public class Telegram {
-	public static JsonObject authJson;
-	public static boolean connected = false;
-	
+	public JsonObject authJson;
+	public boolean connected = false;
 	
 	static int lastUpdate = 0;
-	public static boolean auth(){
+	public String token;
+
+	public boolean auth(String token){
+		this.token = token;
+		return reconnect();
+	}
+	public boolean reconnect(){
 		try{
-			JsonObject obj = sendGet("https://api.telegram.org/bot" + Main.data.token + "/getMe");
+			JsonObject obj = sendGet("https://api.telegram.org/bot" + token + "/getMe");
 			authJson = obj;
 			connected = true;
 			return true;
@@ -36,19 +41,16 @@ public class Telegram {
 			return false;
 		}
 	}
-	public static void getupdate(){
-		
+	public void getUpdate(){
 		JsonObject up = null;
 		try {
-			
 			up = sendGet("https://api.telegram.org/bot" + Main.data.token + "/getUpdates?offset=" + (lastUpdate + 1));
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if(up == null){
-			auth();
+			reconnect();
 		}
 		if(up.has("result")){
 			for (JsonElement ob : up.getAsJsonArray("result")) {
@@ -67,7 +69,7 @@ public class Telegram {
 								String text = obj.getAsJsonObject("message").get("text").getAsString();
 								for(char c : text.toCharArray()){
 									if((int) c == 55357){
-										Telegram.sendMsg(id, "Emoticons are not allowed, sorry!");
+										this.sendMsg(id, "Emoticons are not allowed, sorry!");
 										return;
 									}
 								}
@@ -79,9 +81,9 @@ public class Telegram {
 										chat2.chat_id = id;
 										chat2.parse_mode = "Markdown";
 										chat2.text = "Congratulations, your bot is working! Have fun with this Plugin. Feel free to donate via *PayPal* to me if you like TelegramChat! [PayPal Donation URL](https://goo.gl/I02XGH)";
-										Telegram.sendMsg(chat2);
+										this.sendMsg(chat2);
 									}
-									Telegram.sendMsg(id, "You can see the chat but you can't chat at the moment. Type /linktelegram ingame to chat!");
+									this.sendMsg(id, "You can see the chat but you can't chat at the moment. Type /linktelegram ingame to chat!");
 								}else
 								if(Main.data.linkCodes.containsKey(text)){
 									//LINK
@@ -90,7 +92,7 @@ public class Telegram {
 								}else if(Main.data.linkedChats.containsKey(id)){
 									Main.sendToMC(Main.data.linkedChats.get(id), text, id);
 								}else{
-									Telegram.sendMsg(id, "Sorry, please link your account with /linktelegram ingame to use the chat!");
+									this.sendMsg(id, "Sorry, please link your account with /linktelegram ingame to use the chat!");
 								}
 							}
 							
@@ -106,7 +108,7 @@ public class Telegram {
 		}
 	}
 	
-	public static void sendMsg(int id, String msg){
+	public void sendMsg(int id, String msg){
 		Gson gson = new Gson();
 		Chat chat = new Chat();
 		chat.chat_id = id;
@@ -114,12 +116,12 @@ public class Telegram {
 		post("sendMessage", gson.toJson(chat, Chat.class));
 		
 	}
-	public static void sendMsg(Chat chat){
+	public void sendMsg(Chat chat){
 		Gson gson = new Gson();
 		post("sendMessage", gson.toJson(chat, Chat.class));
 		
 	}
-	public static void sendAll(final Chat chat){
+	public void sendAll(final Chat chat){
 		new Thread(new Runnable(){
 			public void run(){
 				Gson gson = new Gson();
@@ -130,7 +132,7 @@ public class Telegram {
 			}
 		}).start();
 	}
-	public static void post(String method, String json){
+	public void post(String method, String json){
 		try {
 			String body = json;
 			URL url = new URL("https://api.telegram.org/bot" + Main.data.token + "/" + method);
@@ -162,13 +164,13 @@ public class Telegram {
 			writer.close();
 			reader.close();
 		} catch (Exception e) {
-			auth();
+			reconnect();
 			System.out.print("[Telegram] Disconnected from Telegram, reconnect...");
 		}
 		
 	}
 
-	public static JsonObject sendGet(String url) throws IOException {
+	public JsonObject sendGet(String url) throws IOException {
 		String a = url;
 		URL url2 = new URL(a);
 		URLConnection conn = url2.openConnection();

@@ -21,14 +21,14 @@ public class LinkTelegramCmd implements CommandExecutor {
 		if(Main.data == null){
 			Main.data = new Data();
 		}
-		if(Telegram.authJson == null){
+		if(Main.telegramHook.authJson == null){
 			cs.sendMessage("§cPlease add a bot to your server first! /telegram");
 			return true;
 		}
 		
 		String token = Main.generateLinkToken();
 		Main.data.linkCodes.put(token, ((Player) cs).getUniqueId());
-		cs.sendMessage("§aAdd " + Telegram.authJson.getAsJsonObject("result").get("username").getAsString() + " to Telegram and send this message to " + Telegram.authJson.getAsJsonObject("result").get("username").getAsString() + ":");
+		cs.sendMessage("§aAdd " + Main.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString() + " to Telegram and send this message to " + Main.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString() + ":");
 		cs.sendMessage("§c" + token);
 		
 		return true;

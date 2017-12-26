@@ -36,6 +36,8 @@ public class Main extends JavaPlugin implements Listener{
 	
 	public static Data data = new Data();
 	static Plugin pl;
+	public static Telegram telegramHook;
+	
 	@Override
 	public void onEnable(){
 		this.saveDefaultConfig();
@@ -60,11 +62,13 @@ public class Main extends JavaPlugin implements Listener{
 				e.printStackTrace();
 			}
 		}
-		Telegram.auth();
+		telegramHook = new Telegram();
+		telegramHook.auth(data.token);
+		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
 			public void run(){
-				if(Telegram.connected){
-					Telegram.getupdate();
+				if(telegramHook.connected){
+					telegramHook.getUpdate();
 				}
 			}
 		}, 20L, 20L);
@@ -95,7 +99,7 @@ public class Main extends JavaPlugin implements Listener{
 		recievers.remove((Object) sender);
 		String msgF = Main.cfg.getString("chat-format").replace('&', '§').replace("%player%", op.getName()).replace("%message%", msg);
 		for(int id : recievers){
-			Telegram.sendMsg(id, msgF);
+			telegramHook.sendMsg(id, msgF);
 		}
 		Bukkit.broadcastMessage(msgF.replace("&", "§"));
 	
@@ -103,7 +107,7 @@ public class Main extends JavaPlugin implements Listener{
 	public static void link(UUID player, int chatID){
 		Main.data.linkedChats.put(chatID, player);
 		OfflinePlayer p = Bukkit.getOfflinePlayer(player);
-		Telegram.sendMsg(chatID, "Success! Linked " + p.getName());
+		telegramHook.sendMsg(chatID, "Success! Linked " + p.getName());
 	}
 	public static String generateLinkToken(){
 		Random rnd = new Random();
@@ -126,42 +130,42 @@ public class Main extends JavaPlugin implements Listener{
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e){
 		if(!this.getConfig().getBoolean("enable-joinquitmessages")) return;
-		if(Telegram.connected){
+		if(telegramHook.connected){
 			Chat chat = new Chat();
 			chat.parse_mode = "Markdown";
 			chat.text = "`" + e.getPlayer().getName() + " joined the game.`";
-			Telegram.sendAll(chat);
+			telegramHook.sendAll(chat);
 		}
 	}
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e){
 		if(!this.getConfig().getBoolean("enable-deathmessages")) return;
-		if(Telegram.connected){
+		if(telegramHook.connected){
 			Chat chat = new Chat();
 			chat.parse_mode = "Markdown";
 			chat.text = "`"+e.getDeathMessage() + "`";
-			Telegram.sendAll(chat);
+			telegramHook.sendAll(chat);
 		}
 	}
 	@EventHandler
 	public void onQuit(PlayerQuitEvent e){
 		if(!this.getConfig().getBoolean("enable-joinquitmessages")) return;
-		if(Telegram.connected){
+		if(telegramHook.connected){
 			Chat chat = new Chat();
 			chat.parse_mode = "Markdown";
 			chat.text = "`" + e.getPlayer().getName() + " left the game.`";
 			System.out.println(chat.text);
-			Telegram.sendAll(chat);
+			telegramHook.sendAll(chat);
 		}
 	}
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e){
 		if(!this.getConfig().getBoolean("enable-chatmessages")) return;
-		if(Telegram.connected){
+		if(telegramHook.connected){
 			Chat chat = new Chat();
 			chat.parse_mode = "Markdown";
 			chat.text = e.getPlayer().getName() + ": _" + e.getMessage().replaceAll("§.", "") + "_";
-			Telegram.sendAll(chat);
+			telegramHook.sendAll(chat);
 		}
 	}
 }

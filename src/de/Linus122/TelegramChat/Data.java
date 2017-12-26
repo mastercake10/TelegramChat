@@ -11,6 +11,6 @@ public class Data {
 	public HashMap<Integer, UUID> linkedChats = new HashMap<Integer, UUID>();
 	//Player name // RandomInt
 	public HashMap<String, UUID> linkCodes = new HashMap<String, UUID>();
-	public static List<Integer> ids = new ArrayList<Integer>();
+	public List<Integer> ids = new ArrayList<Integer>();
 	boolean firstUse = true;
 }
