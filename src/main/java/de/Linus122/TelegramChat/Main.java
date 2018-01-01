@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 
 import de.Linus122.Metrics.Metrics;
 import de.Linus122.TelegramComponents.Chat;
+import de.Linus122.TelegramComponents.ChatMessageToMc;
 
 
 public class Main extends JavaPlugin implements Listener{
@@ -94,7 +95,10 @@ public class Main extends JavaPlugin implements Listener{
 	public void onDisable(){
 		save();
 	}
-	public static void sendToMC(UUID uuid, String msg, int sender){
+	public static void sendToMC(ChatMessageToMc chatMsg) {
+		sendToMC(chatMsg.getUuid_sender(), chatMsg.getContent(), chatMsg.getChatID_sender());
+	}
+	private static void sendToMC(UUID uuid, String msg, int sender){
 		OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
 		List<Integer> recievers = new ArrayList<Integer>();
 		recievers.addAll(Main.data.ids);
@@ -166,8 +170,11 @@ public class Main extends JavaPlugin implements Listener{
 		if(telegramHook.connected){
 			Chat chat = new Chat();
 			chat.parse_mode = "Markdown";
-			chat.text = e.getPlayer().getName() + ": _" + e.getMessage().replaceAll("§.", "") + "_";
+			chat.text = escape(e.getPlayer().getName()) + ": _" + e.getMessage().replaceAll("§.", "") + "_";
 			telegramHook.sendAll(chat);
 		}
+	}
+	public String escape(String str){
+		return str.replace("_", "\\_");
 	}
 }

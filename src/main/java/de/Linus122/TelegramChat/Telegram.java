@@ -9,6 +9,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -16,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.Linus122.TelegramComponents.Chat;
+import de.Linus122.TelegramComponents.ChatMessageToMc;
 
 
 public class Telegram {
@@ -25,6 +28,12 @@ public class Telegram {
 	static int lastUpdate = 0;
 	public String token;
 
+	private List<TelegramActionListener> listeners = new ArrayList<TelegramActionListener>();
+	
+	public void addListener(TelegramActionListener actionListener){
+		listeners.add(actionListener);
+	}
+	
 	public boolean auth(String token){
 		this.token = token;
 		return reconnect();
@@ -90,7 +99,11 @@ public class Telegram {
 									Main.link(Main.data.linkCodes.get(text), id);
 									Main.data.linkCodes.remove(text);
 								}else if(Main.data.linkedChats.containsKey(id)){
-									Main.sendToMC(Main.data.linkedChats.get(id), text, id);
+									ChatMessageToMc chatMsg = new ChatMessageToMc(Main.data.linkedChats.get(id), text, id);
+									for(TelegramActionListener actionListener : listeners){
+										actionListener.onSendToMinecraft(chatMsg);
+									}
+									Main.sendToMC(chatMsg);
 								}else{
 									this.sendMsg(id, "Sorry, please link your account with /linktelegram ingame to use the chat!");
 								}
@@ -109,14 +122,15 @@ public class Telegram {
 	}
 	
 	public void sendMsg(int id, String msg){
-		Gson gson = new Gson();
 		Chat chat = new Chat();
 		chat.chat_id = id;
 		chat.text = msg;
-		post("sendMessage", gson.toJson(chat, Chat.class));
-		
+		sendMsg(chat);
 	}
 	public void sendMsg(Chat chat){
+		for(TelegramActionListener actionListener : listeners){
+			actionListener.onSendToTelegram(chat);
+		}
 		Gson gson = new Gson();
 		post("sendMessage", gson.toJson(chat, Chat.class));
 		
@@ -127,7 +141,8 @@ public class Telegram {
 				Gson gson = new Gson();
 				for(int id : Main.data.ids){
 					chat.chat_id = id;
-					post("sendMessage", gson.toJson(chat, Chat.class));
+					//post("sendMessage", gson.toJson(chat, Chat.class));
+					sendMsg(chat);
 				}
 			}
 		}).start();
