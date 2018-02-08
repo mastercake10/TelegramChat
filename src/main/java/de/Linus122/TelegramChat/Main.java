@@ -67,10 +67,15 @@ public class Main extends JavaPlugin implements Listener{
 		telegramHook = new Telegram();
 		telegramHook.auth(data.token);
 		
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+		Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, new Runnable(){
+			boolean connectionLost = false;
 			public void run(){
+				if(connectionLost){
+					boolean success = telegramHook.reconnect();
+					if(success) connectionLost = false;
+				}
 				if(telegramHook.connected){
-					telegramHook.getUpdate();
+					connectionLost = !telegramHook.getUpdate();
 				}
 			}
 		}, 20L, 20L);

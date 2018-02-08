@@ -42,6 +42,7 @@ public class Telegram {
 		try{
 			JsonObject obj = sendGet("https://api.telegram.org/bot" + token + "/getMe");
 			authJson = obj;
+			System.out.print("[Telegram] Established a connection with the telegram servers.");
 			connected = true;
 			return true;
 		}catch(Exception e){
@@ -50,16 +51,15 @@ public class Telegram {
 			return false;
 		}
 	}
-	public void getUpdate(){
+	public boolean getUpdate(){
 		JsonObject up = null;
 		try {
 			up = sendGet("https://api.telegram.org/bot" + Main.data.token + "/getUpdates?offset=" + (lastUpdate + 1));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return false;
 		}
 		if(up == null){
-			reconnect();
+			return false;
 		}
 		if(up.has("result")){
 			for (JsonElement ob : up.getAsJsonArray("result")) {
@@ -79,10 +79,10 @@ public class Telegram {
 								for(char c : text.toCharArray()){
 									if((int) c == 55357){
 										this.sendMsg(id, "Emoticons are not allowed, sorry!");
-										return;
+										return true;
 									}
 								}
-								if(text.length() == 0) return;
+								if(text.length() == 0) return true;
 								if(text.equals("/start")){
 									if(Main.data.firstUse){
 										Main.data.firstUse = false;
@@ -119,6 +119,7 @@ public class Telegram {
 				}
 			}	
 		}
+		return true;
 	}
 	
 	public void sendMsg(int id, String msg){
