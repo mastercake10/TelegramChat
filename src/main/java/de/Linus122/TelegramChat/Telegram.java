@@ -133,6 +133,7 @@ public class Telegram {
 			actionListener.onSendToTelegram(chat);
 		}
 		Gson gson = new Gson();
+
 		post("sendMessage", gson.toJson(chat, Chat.class));
 		
 	}

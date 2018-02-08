@@ -175,7 +175,7 @@ public class Main extends JavaPlugin implements Listener{
 		if(telegramHook.connected){
 			Chat chat = new Chat();
 			chat.parse_mode = "Markdown";
-			chat.text = escape(e.getPlayer().getName()) + ": _" + e.getMessage().replaceAll("§.", "") + "_";
+			chat.text = escape(e.getPlayer().getName()) + ": " + escape(e.getMessage()).replaceAll("§.", "") ;
 			telegramHook.sendAll(chat);
 		}
 	}
