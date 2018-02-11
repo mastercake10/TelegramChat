@@ -77,10 +77,11 @@ public class Telegram {
 							if(obj.getAsJsonObject("message").has("text")){
 								String text = obj.getAsJsonObject("message").get("text").getAsString();
 								for(char c : text.toCharArray()){
-									if((int) c == 55357){
+									/*if((int) c == 55357){
 										this.sendMsg(id, "Emoticons are not allowed, sorry!");
 										return true;
-									}
+									}*/
+
 								}
 								if(text.length() == 0) return true;
 								if(text.equals("/start")){
@@ -89,10 +90,10 @@ public class Telegram {
 										Chat chat2 = new Chat();
 										chat2.chat_id = id;
 										chat2.parse_mode = "Markdown";
-										chat2.text = "Congratulations, your bot is working! Have fun with this Plugin. Feel free to donate via *PayPal* to me if you like TelegramChat! [PayPal Donation URL](https://goo.gl/I02XGH)";
+										chat2.text = "Congratulations, your bot is working! Have fun with this Plugin. Feel free to donate via *PayPal* to keep this project up to date! [PayPal Donation URL](http://donate.spaceio.xyz/)";
 										this.sendMsg(chat2);
 									}
-									this.sendMsg(id, "You can see the chat but you can't chat at the moment. Type /linktelegram ingame to chat!");
+									this.sendMsg(id, "You can see the chat but you can't chat at the moment. Type */linktelegram ingame* to chat!");
 								}else
 								if(Main.data.linkCodes.containsKey(text)){
 									//LINK
@@ -103,9 +104,10 @@ public class Telegram {
 									for(TelegramActionListener actionListener : listeners){
 										actionListener.onSendToMinecraft(chatMsg);
 									}
+
 									Main.sendToMC(chatMsg);
 								}else{
-									this.sendMsg(id, "Sorry, please link your account with /linktelegram ingame to use the chat!");
+									this.sendMsg(id, "Sorry, please link your account with */linktelegram ingame* to use the chat!");
 								}
 							}
 							
