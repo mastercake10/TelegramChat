@@ -20,141 +20,143 @@ import com.google.gson.JsonParser;
 import de.Linus122.TelegramComponents.Chat;
 import de.Linus122.TelegramComponents.ChatMessageToMc;
 
-
 public class Telegram {
 	public JsonObject authJson;
 	public boolean connected = false;
-	
+
 	static int lastUpdate = 0;
 	public String token;
 
 	private List<TelegramActionListener> listeners = new ArrayList<TelegramActionListener>();
-	
-	public void addListener(TelegramActionListener actionListener){
+
+	private final String API_URL_GETME = "https://api.telegram.org/bot%s/getMe";
+	private final String API_URL_GETUPDATES = "https://api.telegram.org/bot%s/getUpdates?offset=%d";
+	private final String API_URL_GENERAL = "https://api.telegram.org/bot%s/%s";
+
+	public void addListener(TelegramActionListener actionListener) {
 		listeners.add(actionListener);
 	}
-	
-	public boolean auth(String token){
+
+	public boolean auth(String token) {
 		this.token = token;
 		return reconnect();
 	}
-	public boolean reconnect(){
-		try{
-			JsonObject obj = sendGet("https://api.telegram.org/bot" + token + "/getMe");
+
+	public boolean reconnect() {
+		try {
+			JsonObject obj = sendGet(String.format(API_URL_GETME, token));
 			authJson = obj;
 			System.out.print("[Telegram] Established a connection with the telegram servers.");
 			connected = true;
 			return true;
-		}catch(Exception e){
+		} catch (Exception e) {
 			connected = false;
 			System.out.print("[Telegram] Sorry, but could not connect to Telegram servers. The token could be wrong.");
 			return false;
 		}
 	}
-	public boolean getUpdate(){
+
+	public boolean getUpdate() {
 		JsonObject up = null;
 		try {
-			up = sendGet("https://api.telegram.org/bot" + Main.data.token + "/getUpdates?offset=" + (lastUpdate + 1));
+			up = sendGet(String.format(API_URL_GETUPDATES, Main.getBackend().getToken(), lastUpdate + 1));
 		} catch (IOException e) {
 			return false;
 		}
-		if(up == null){
+		if (up == null) {
 			return false;
 		}
-		if(up.has("result")){
+		if (up.has("result")) {
 			for (JsonElement ob : up.getAsJsonArray("result")) {
 				if (ob.isJsonObject()) {
 					JsonObject obj = (JsonObject) ob;
-					if(obj.has("update_id")){
+					if (obj.has("update_id")) {
 						lastUpdate = obj.get("update_id").getAsInt();
 					}
 					if (obj.has("message")) {
 						JsonObject chat = obj.getAsJsonObject("message").getAsJsonObject("chat");
-						if(chat.get("type").getAsString().equals("private")){
+						if (chat.get("type").getAsString().equals("private")) {
 							int id = chat.get("id").getAsInt();
-							if(!Main.data.ids.contains(id)) Main.data.ids.add(id);
-							
-							if(obj.getAsJsonObject("message").has("text")){
-								String text = obj.getAsJsonObject("message").get("text").getAsString();
-								for(char c : text.toCharArray()){
-									/*if((int) c == 55357){
-										this.sendMsg(id, "Emoticons are not allowed, sorry!");
-										return true;
-									}*/
+							if (!Main.getBackend().ids.contains(id))
+								Main.getBackend().ids.add(id);
 
-								}
-								if(text.length() == 0) return true;
-								if(text.equals("/start")){
-									if(Main.data.firstUse){
-										Main.data.firstUse = false;
+							if (obj.getAsJsonObject("message").has("text")) {
+								String text = obj.getAsJsonObject("message").get("text").getAsString();
+								if (text.length() == 0)
+									return true;
+								if (text.equals("/start")) {
+									if (Main.getBackend().isFirstUse()) {
+										Main.getBackend().setFirstUse(false);
 										Chat chat2 = new Chat();
 										chat2.chat_id = id;
 										chat2.parse_mode = "Markdown";
-										chat2.text = "Congratulations, your bot is working! Have fun with this Plugin. Feel free to donate via *PayPal* to keep this project up to date! [PayPal Donation URL](http://donate.spaceio.xyz/)";
+										chat2.text = Utils.formatMSG("setup-msg")[0];
 										this.sendMsg(chat2);
 									}
-									this.sendMsg(id, "You can see the chat but you can't chat at the moment. Type */linktelegram ingame* to chat!");
-								}else
-								if(Main.data.linkCodes.containsKey(text)){
-									//LINK
-									Main.link(Main.data.linkCodes.get(text), id);
-									Main.data.linkCodes.remove(text);
-								}else if(Main.data.linkedChats.containsKey(id)){
-									ChatMessageToMc chatMsg = new ChatMessageToMc(Main.data.linkedChats.get(id), text, id);
-									for(TelegramActionListener actionListener : listeners){
+									this.sendMsg(id, Utils.formatMSG("can-see-but-not-chat")[0]);
+								} else if (Main.getBackend().getLinkCodes().containsKey(text)) {
+									// LINK
+									Main.link(Main.getBackend().getUUIDFromLinkCode(text), id);
+									Main.getBackend().removeLinkCode(text);
+								} else if (Main.getBackend().getLinkedChats().containsKey(id)) {
+									ChatMessageToMc chatMsg = new ChatMessageToMc(
+											Main.getBackend().getUUIDFromChatID(id), text, id);
+									for (TelegramActionListener actionListener : listeners) {
 										actionListener.onSendToMinecraft(chatMsg);
 									}
 
 									Main.sendToMC(chatMsg);
-								}else{
-									this.sendMsg(id, "Sorry, please link your account with */linktelegram ingame* to use the chat!");
+								} else {
+									this.sendMsg(id, Utils.formatMSG("need-to-link")[0]);
 								}
 							}
-							
-						}else if(chat.get("type").getAsString().equals("group")){
+
+						} else if (chat.get("type").getAsString().equals("group")) {
 							int id = chat.get("id").getAsInt();
-							if(!Main.data.ids.contains(id))
-								Main.data.ids.add(id);
+							if (!Main.getBackend().ids.contains(id))
+								Main.getBackend().ids.add(id);
 						}
 					}
-					
+
 				}
-			}	
+			}
 		}
 		return true;
 	}
-	
-	public void sendMsg(int id, String msg){
+
+	public void sendMsg(int id, String msg) {
 		Chat chat = new Chat();
 		chat.chat_id = id;
 		chat.text = msg;
 		sendMsg(chat);
 	}
-	public void sendMsg(Chat chat){
-		for(TelegramActionListener actionListener : listeners){
+
+	public void sendMsg(Chat chat) {
+		for (TelegramActionListener actionListener : listeners) {
 			actionListener.onSendToTelegram(chat);
 		}
 		Gson gson = new Gson();
 
 		post("sendMessage", gson.toJson(chat, Chat.class));
-		
+
 	}
-	public void sendAll(final Chat chat){
-		new Thread(new Runnable(){
-			public void run(){
-				Gson gson = new Gson();
-				for(int id : Main.data.ids){
+
+	public void sendAll(final Chat chat) {
+		new Thread(new Runnable() {
+			public void run() {
+				for (int id : Main.getBackend().ids) {
 					chat.chat_id = id;
-					//post("sendMessage", gson.toJson(chat, Chat.class));
+					// post("sendMessage", gson.toJson(chat, Chat.class));
 					sendMsg(chat);
 				}
 			}
 		}).start();
 	}
-	public void post(String method, String json){
+
+	public void post(String method, String json) {
 		try {
 			String body = json;
-			URL url = new URL("https://api.telegram.org/bot" + Main.data.token + "/" + method);
+			URL url = new URL(String.format(API_URL_GENERAL, Main.getBackend().getToken(), method));
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setDoInput(true);
@@ -163,22 +165,13 @@ public class Telegram {
 			connection.setRequestProperty("Content-Type", "application/json; ; Charset=UTF-8");
 			connection.setRequestProperty("Content-Length", String.valueOf(body.length()));
 
-			
 			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(wr, "UTF-8"));
 			writer.write(body);
 			writer.close();
 			wr.close();
-			
-			//OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-			//writer.write(body);
-			//writer.flush();
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-			for (String line; (line = reader.readLine()) != null;) {
-				
-			}
 
 			writer.close();
 			reader.close();
@@ -186,7 +179,7 @@ public class Telegram {
 			reconnect();
 			System.out.print("[Telegram] Disconnected from Telegram, reconnect...");
 		}
-		
+
 	}
 
 	public JsonObject sendGet(String url) throws IOException {
@@ -207,4 +200,5 @@ public class Telegram {
 		return parser.parse(all).getAsJsonObject();
 
 	}
+
 }

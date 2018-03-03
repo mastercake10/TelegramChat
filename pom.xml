@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>TelegramChat</groupId>
 	<artifactId>TelegramChat</artifactId>
-	<version>1.0.10</version>
+	<version>1.0.11</version>
 	<name>TelegramChat</name>
 	<url>https://www.spigotmc.org/resources/telegramchat.16576/</url>
 	<repositories>

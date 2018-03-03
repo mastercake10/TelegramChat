@@ -8,26 +8,27 @@ public class TelegramCmd implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command arg1, String arg2, String[] args) {
-		if(!cs.hasPermission("telegram.settoken")){
+		if (!cs.hasPermission("telegram.settoken")) {
 			cs.sendMessage("§cYou don't have permissions to use this!");
 			return true;
 		}
-		if(args.length == 0){
+		if (args.length == 0) {
 			cs.sendMessage("§c/telegram [token]");
 			return true;
 		}
-		if(Main.data == null){
-			Main.data = new Data();
+		if (Main.getBackend() == null) {
+			Main.initBackend();
 		}
-		Main.data.token = args[0];
+		Main.getBackend().setToken(args[0]);
 		Main.save();
 		boolean success = false;
-	
-		success = Main.telegramHook.auth(Main.data.token);
-		if(success){
+
+		success = Main.telegramHook.auth(Main.getBackend().getToken());
+		if (success) {
 			cs.sendMessage("§cSuccessfully connected to Telegram!");
-			cs.sendMessage("§aAdd " + Main.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString() + " to Telegram!");
-		}else{
+			cs.sendMessage("§aAdd " + Main.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString()
+					+ " to Telegram!");
+		} else {
 			cs.sendMessage("§cWrong token. Paste in the whole token!");
 		}
 		return true;

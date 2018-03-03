@@ -1,4 +1,19 @@
-chat-format: '&c[Telegram]&r %player%: %message%'
+messages:
+  # telegram messages
+  general-message-to-mc: "&c[Telegram]&r %s: %s"
+  join-message: "`%s joined the game.`"
+  quit-message: "`%s left the game.`"
+  death-message: "`%s`"
+  need-to-link: "Sorry, please link your account with */linktelegram ingame* to use the chat!"
+  can-see-but-not-chat: "You can see the chat but you can't chat at the moment. Type */linktelegram ingame* to chat!"
+  success-linked: "Success! Linked %s"
+  setup-msg: "Congratulations, your bot is working! Have fun with this Plugin. Feel free to donate via *PayPal* to keep this project up to date! [PayPal Donation URL](http://donate.spaceio.xyz/)"
+  # minecraft message:
+  general-message-to-telegram: "%s: %s"
+  no-permissions: "&cYou don't have permissions to use this!"
+  cant-link-console: "&cSorry, but you can't link the console currently."
+  need-to-add-bot-first: "&cPlease add a bot to your server first! /telegram"
+  get-token: "&aAdd %s to Telegram and send this message to %s: \n%s"
 enable-joinquitmessages: true
 enable-deathmessages: true
 enable-chatmessages: true

@@ -20,15 +20,16 @@ import com.google.gson.Gson;
 
 /*
  * SpaceIOMetrics main class by Linus122
- * version: 0.05
+ * version: 0.06
  * 
  */
+
 public class Metrics {
 	private Plugin pl;
 	private final Gson gson = new Gson();
 	
 	private String URL = "https://spaceio.xyz/update/%s";
-	private final String VERSION = "0.05";
+	private final String VERSION = "0.06";
 	private int REFRESH_INTERVAL = 600000;
 	
 	public Metrics(Plugin pl){
@@ -133,7 +134,8 @@ public class Metrics {
 	}
 	// method source: http://www.jcgonzalez.com/linux-get-distro-from-java-examples
 	private String getDistro(){
-		 //lists all the files ending with -release in the etc folder
+		
+		// lists all the files ending with -release in the etc folder
         File dir = new File("/etc/");
         File fileList[] = new File[0];
         if(dir.exists()){
@@ -143,22 +145,25 @@ public class Metrics {
                 }
             });
         }
-        //looks for the version file (not all linux distros)
-        File fileVersion = new File("/proc/version");
-        if(fileVersion.exists()){
-            fileList = Arrays.copyOf(fileList,fileList.length+1);
-            fileList[fileList.length-1] = fileVersion;
-        }       
-        //prints first version-related file
-        for (File f : fileList) {
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(f));
-                String strLine = null;
-                while ((strLine = br.readLine()) != null) {
-                    return strLine;
-                }
-                br.close();
-            } catch (Exception e) {}
+        try {
+	        // looks for the version file (not all linux distros)
+	        File fileVersion = new File("/proc/version");
+	        if(fileVersion.exists() && fileList.length > 0){
+	            fileList = Arrays.copyOf(fileList,fileList.length+1);
+	            fileList[fileList.length-1] = fileVersion;
+	        }    
+	        
+	        // prints first version-related file
+	        for (File f : fileList) {
+	                BufferedReader br = new BufferedReader(new FileReader(f));
+	                String strLine = null;
+	                while ((strLine = br.readLine()) != null) {
+	                    return strLine;
+	                }
+	                br.close();
+	        }
+        } catch (Exception e) {
+        	// Exception is thrown when something went wrong while obtaining the distribution name.
         }
 		return "unknown";    
 	}
