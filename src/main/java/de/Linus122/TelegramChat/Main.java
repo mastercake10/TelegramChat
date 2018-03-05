@@ -25,7 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.gson.Gson;
 
 import de.Linus122.Metrics.Metrics;
-import de.Linus122.TelegramComponents.Chat;
+import de.Linus122.TelegramComponents.ChatMessageToTelegram;
 import de.Linus122.TelegramComponents.ChatMessageToMc;
 
 public class Main extends JavaPlugin implements Listener {
@@ -44,6 +44,7 @@ public class Main extends JavaPlugin implements Listener {
 		Bukkit.getPluginCommand("telegram").setExecutor(new TelegramCmd());
 		Bukkit.getPluginCommand("linktelegram").setExecutor(new LinkTelegramCmd());
 		Bukkit.getPluginManager().registerEvents(this, this);
+		
 		File dir = new File("plugins/TelegramChat/");
 		dir.mkdir();
 		data = new Data();
@@ -60,6 +61,7 @@ public class Main extends JavaPlugin implements Listener {
 				e.printStackTrace();
 			}
 		}
+		
 		telegramHook = new Telegram();
 		telegramHook.auth(data.getToken());
 
@@ -155,7 +157,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (!this.getConfig().getBoolean("enable-joinquitmessages"))
 			return;
 		if (telegramHook.connected) {
-			Chat chat = new Chat();
+			ChatMessageToTelegram chat = new ChatMessageToTelegram();
 			chat.parse_mode = "Markdown";
 			chat.text = Utils.formatMSG("join-message", e.getPlayer().getName())[0];
 			telegramHook.sendAll(chat);
@@ -167,7 +169,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (!this.getConfig().getBoolean("enable-deathmessages"))
 			return;
 		if (telegramHook.connected) {
-			Chat chat = new Chat();
+			ChatMessageToTelegram chat = new ChatMessageToTelegram();
 			chat.parse_mode = "Markdown";
 			chat.text = Utils.formatMSG("death-message", e.getDeathMessage())[0];
 			telegramHook.sendAll(chat);
@@ -179,7 +181,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (!this.getConfig().getBoolean("enable-joinquitmessages"))
 			return;
 		if (telegramHook.connected) {
-			Chat chat = new Chat();
+			ChatMessageToTelegram chat = new ChatMessageToTelegram();
 			chat.parse_mode = "Markdown";
 			chat.text = Utils.formatMSG("quit-message", e.getPlayer().getName())[0];
 			telegramHook.sendAll(chat);
@@ -191,7 +193,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (!this.getConfig().getBoolean("enable-chatmessages"))
 			return;
 		if (telegramHook.connected) {
-			Chat chat = new Chat();
+			ChatMessageToTelegram chat = new ChatMessageToTelegram();
 			chat.parse_mode = "Markdown";
 			chat.text = Utils
 					.escape(Utils.formatMSG("general-message-to-telegram", e.getPlayer().getName(), e.getMessage())[0])
