@@ -2,7 +2,7 @@ package de.Linus122.TelegramComponents;
 
 import java.util.UUID;
 
-public class ChatMessageToMc {
+public class ChatMessageToMc extends Cancellable{
 	UUID uuid_sender;
 	String content;
 	int chatID_sender;

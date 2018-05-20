@@ -140,9 +140,9 @@ public class Telegram {
 			actionListener.onSendToTelegram(chat);
 		}
 		Gson gson = new Gson();
-
-		post("sendMessage", gson.toJson(chat, ChatMessageToTelegram.class));
-
+		if(!chat.isCancelled()){
+			post("sendMessage", gson.toJson(chat, ChatMessageToTelegram.class));	
+		}
 	}
 
 	public void sendAll(final ChatMessageToTelegram chat) {
