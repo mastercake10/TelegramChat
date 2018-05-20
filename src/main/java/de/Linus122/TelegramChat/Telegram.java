@@ -108,8 +108,9 @@ public class Telegram {
 									for (TelegramActionListener actionListener : listeners) {
 										actionListener.onSendToMinecraft(chatMsg);
 									}
-
-									Main.sendToMC(chatMsg);
+									if(!chatMsg.isCancelled()){
+										Main.sendToMC(chatMsg);
+									}
 								} else {
 									this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
 								}
