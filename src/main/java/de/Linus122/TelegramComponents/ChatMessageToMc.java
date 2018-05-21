@@ -2,12 +2,12 @@ package de.Linus122.TelegramComponents;
 
 import java.util.UUID;
 
-public class ChatMessageToMc extends Cancellable{
+public class ChatMessageToMc extends Cancellable {
 	UUID uuid_sender;
 	String content;
 	int chatID_sender;
-	
-	public ChatMessageToMc(UUID uuid_sender, String content, int chatID_sender){
+
+	public ChatMessageToMc(UUID uuid_sender, String content, int chatID_sender) {
 		this.uuid_sender = uuid_sender;
 		this.content = content;
 		this.chatID_sender = chatID_sender;

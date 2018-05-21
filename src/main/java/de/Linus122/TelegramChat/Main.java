@@ -44,7 +44,7 @@ public class Main extends JavaPlugin implements Listener {
 		Bukkit.getPluginCommand("telegram").setExecutor(new TelegramCmd());
 		Bukkit.getPluginCommand("linktelegram").setExecutor(new LinkTelegramCmd());
 		Bukkit.getPluginManager().registerEvents(this, this);
-		
+
 		File dir = new File("plugins/TelegramChat/");
 		dir.mkdir();
 		data = new Data();
@@ -61,7 +61,7 @@ public class Main extends JavaPlugin implements Listener {
 				e.printStackTrace();
 			}
 		}
-		
+
 		telegramHook = new Telegram();
 		telegramHook.auth(data.getToken());
 
@@ -192,7 +192,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onChat(AsyncPlayerChatEvent e) {
 		if (!this.getConfig().getBoolean("enable-chatmessages"))
 			return;
-		if(e.isCancelled())
+		if (e.isCancelled())
 			return;
 		if (telegramHook.connected) {
 			ChatMessageToTelegram chat = new ChatMessageToTelegram();
