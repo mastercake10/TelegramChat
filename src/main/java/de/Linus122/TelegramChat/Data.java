@@ -1,18 +1,28 @@
 package de.Linus122.TelegramChat;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+
 public class Data {
 	private String token = "";
+	
 	// Player name // ChatID
 	private HashMap<Integer, UUID> linkedChats = new HashMap<Integer, UUID>();
+	
 	// Player name // RandomInt
 	private HashMap<String, UUID> linkCodes = new HashMap<String, UUID>();
+	
 	public List<Integer> ids = new ArrayList<Integer>();
+	
 	private boolean firstUse = true;
+	
 
 	public String getToken() {
 		return token;
