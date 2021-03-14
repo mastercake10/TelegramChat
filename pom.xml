@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>TelegramChat</groupId>
 	<artifactId>TelegramChat</artifactId>
-	<version>1.0.14</version>
+	<version>1.0.15</version>
 	<name>TelegramChat</name>
 	<url>https://www.spigotmc.org/resources/telegramchat.16576/</url>
 	<repositories>
@@ -49,7 +49,11 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<finalName>${project.name}</finalName>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+					<outputDirectory>${dir}</outputDirectory>
+					<finalName>${project.build.finalName}</finalName>
 				</configuration>
 			</plugin>
 		</plugins>
