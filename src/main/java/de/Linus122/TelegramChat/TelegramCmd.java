@@ -16,17 +16,17 @@ public class TelegramCmd implements CommandExecutor {
 			cs.sendMessage("§c/telegram [token]");
 			return true;
 		}
-		if (Main.getBackend() == null) {
-			Main.initBackend();
+		if (TelegramChat.getBackend() == null) {
+			TelegramChat.initBackend();
 		}
-		Main.getBackend().setToken(args[0]);
-		Main.save();
+		TelegramChat.getBackend().setToken(args[0]);
+		TelegramChat.save();
 		boolean success = false;
 
-		success = Main.telegramHook.auth(Main.getBackend().getToken());
+		success = TelegramChat.telegramHook.auth(TelegramChat.getBackend().getToken());
 		if (success) {
 			cs.sendMessage("§cSuccessfully connected to Telegram!");
-			cs.sendMessage("§aAdd " + Main.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString()
+			cs.sendMessage("§aAdd " + TelegramChat.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString()
 					+ " to Telegram!");
 		} else {
 			cs.sendMessage("§cWrong token. Paste in the whole token!");

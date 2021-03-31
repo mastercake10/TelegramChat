@@ -1,4 +1,4 @@
-package de.Linus122.TelegramChat;
+package de.Linus122.Telegram;
 
 import org.bukkit.configuration.file.FileConfiguration;
 

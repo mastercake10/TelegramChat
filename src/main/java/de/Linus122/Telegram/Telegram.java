@@ -1,4 +1,4 @@
-package de.Linus122.TelegramChat;
+package de.Linus122.Telegram;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.Linus122.TelegramComponents.ChatMessageToTelegram;
+import de.Linus122.TelegramChat.TelegramChat;
 import de.Linus122.TelegramComponents.Chat;
 import de.Linus122.TelegramComponents.ChatMessageToMc;
 import de.Linus122.TelegramComponents.Update;
@@ -63,7 +64,7 @@ public class Telegram {
 	public boolean getUpdate() {
 		JsonObject up = null;
 		try {
-			up = sendGet(String.format(API_URL_GETUPDATES, Main.getBackend().getToken(), lastUpdate + 1));
+			up = sendGet(String.format(API_URL_GETUPDATES, TelegramChat.getBackend().getToken(), lastUpdate + 1));
 		} catch (IOException e) {
 			return false;
 		}
@@ -81,16 +82,16 @@ public class Telegram {
 					if (update.getMessage() != null) {
 						Chat chat = update.getMessage().getChat();
 						if (chat.isPrivate()) {
-							if (!Main.getBackend().ids.contains(chat.getId()))
-								Main.getBackend().ids.add(chat.getId());
+							if (!TelegramChat.getBackend().ids.contains(chat.getId()))
+								TelegramChat.getBackend().ids.add(chat.getId());
 
 							if (update.getMessage().getText() != null) {
 								String text = update.getMessage().getText();
 								if (text.length() == 0)
 									return true;
 								if (text.equals("/start")) {
-									if (Main.getBackend().isFirstUse()) {
-										Main.getBackend().setFirstUse(false);
+									if (TelegramChat.getBackend().isFirstUse()) {
+										TelegramChat.getBackend().setFirstUse(false);
 										ChatMessageToTelegram chat2 = new ChatMessageToTelegram();
 										chat2.chat_id = chat.getId();
 										chat2.parse_mode = "Markdown";
@@ -98,18 +99,20 @@ public class Telegram {
 										this.sendMsg(chat2);
 									}
 									this.sendMsg(chat.getId(), Utils.formatMSG("can-see-but-not-chat")[0]);
-								} else if (Main.getBackend().getLinkCodes().containsKey(text)) {
+								} else if (TelegramChat.getBackend().getLinkCodes().containsKey(text)) {
 									// LINK
-									Main.link(Main.getBackend().getUUIDFromLinkCode(text), chat.getId());
-									Main.getBackend().removeLinkCode(text);
-								} else if (Main.getBackend().getLinkedChats().containsKey(chat.getId())) {
+									TelegramChat.link(TelegramChat.getBackend().getUUIDFromLinkCode(text), chat.getId());
+									TelegramChat.getBackend().removeLinkCode(text);
+								} else if (TelegramChat.getBackend().getLinkedChats().containsKey(chat.getId())) {
 									ChatMessageToMc chatMsg = new ChatMessageToMc(
-											Main.getBackend().getUUIDFromChatID(chat.getId()), text, chat.getId());
+											TelegramChat.getBackend().getUUIDFromChatID(chat.getId()), text, chat.getId());
+									
 									for (TelegramActionListener actionListener : listeners) {
 										actionListener.onSendToMinecraft(chatMsg);
 									}
+									
 									if(!chatMsg.isCancelled()){
-										Main.sendToMC(chatMsg);
+										TelegramChat.sendToMC(chatMsg);
 									}
 								} else {
 									this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
@@ -118,8 +121,8 @@ public class Telegram {
 
 						} else if (!chat.isPrivate()) {
 							int id = chat.getId();
-							if (!Main.getBackend().ids.contains(id))
-								Main.getBackend().ids.add(id);
+							if (!TelegramChat.getBackend().ids.contains(id))
+								TelegramChat.getBackend().ids.add(id);
 						}
 					}
 
@@ -149,7 +152,7 @@ public class Telegram {
 	public void sendAll(final ChatMessageToTelegram chat) {
 		new Thread(new Runnable() {
 			public void run() {
-				for (int id : Main.getBackend().ids) {
+				for (int id : TelegramChat.getBackend().ids) {
 					chat.chat_id = id;
 					// post("sendMessage", gson.toJson(chat, Chat.class));
 					sendMsg(chat);
@@ -161,7 +164,7 @@ public class Telegram {
 	public void post(String method, String json) {
 		try {
 			String body = json;
-			URL url = new URL(String.format(API_URL_GENERAL, Main.getBackend().getToken(), method));
+			URL url = new URL(String.format(API_URL_GENERAL, TelegramChat.getBackend().getToken(), method));
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setDoInput(true);

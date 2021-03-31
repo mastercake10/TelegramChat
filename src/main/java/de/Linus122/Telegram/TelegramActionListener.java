@@ -1,4 +1,4 @@
-package de.Linus122.TelegramChat;
+package de.Linus122.Telegram;
 
 import de.Linus122.TelegramComponents.ChatMessageToTelegram;
 import de.Linus122.TelegramComponents.ChatMessageToMc;

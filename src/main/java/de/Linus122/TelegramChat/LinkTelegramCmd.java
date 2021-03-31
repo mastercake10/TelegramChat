@@ -7,6 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import de.Linus122.Telegram.Utils;
+
 public class LinkTelegramCmd implements CommandExecutor {
 
 	@Override
@@ -18,19 +20,19 @@ public class LinkTelegramCmd implements CommandExecutor {
 			cs.sendMessage(Utils.formatMSG("no-permissions")[0]);
 			return true;
 		}
-		if (Main.getBackend() == null) {
-			Main.initBackend();
+		if (TelegramChat.getBackend() == null) {
+			TelegramChat.initBackend();
 		}
-		if (Main.telegramHook.authJson == null) {
+		if (TelegramChat.telegramHook.authJson == null) {
 			cs.sendMessage(Utils.formatMSG("need-to-add-bot-first")[0]);
 			return true;
 		}
 
-		String token = Main.generateLinkToken();
-		Main.getBackend().addLinkCode(token, ((Player) cs).getUniqueId());
+		String token = TelegramChat.generateLinkToken();
+		TelegramChat.getBackend().addLinkCode(token, ((Player) cs).getUniqueId());
 		cs.sendMessage(Utils.formatMSG("get-token",
-				Main.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString(),
-				Main.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString(), token));
+				TelegramChat.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString(),
+				TelegramChat.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString(), token));
 
 		return true;
 	}

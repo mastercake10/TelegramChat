@@ -25,11 +25,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.gson.Gson;
 
+import de.Linus122.Handlers.BanHandler;
 import de.Linus122.Metrics.Metrics;
+import de.Linus122.Telegram.Telegram;
+import de.Linus122.Telegram.Utils;
 import de.Linus122.TelegramComponents.ChatMessageToMc;
 import de.Linus122.TelegramComponents.ChatMessageToTelegram;
 
-public class Main extends JavaPlugin implements Listener {
+public class TelegramChat extends JavaPlugin implements Listener {
 	private static File datad = new File("plugins/TelegramChat/data.json");
 	private static FileConfiguration cfg;
 
@@ -81,6 +84,8 @@ public class Main extends JavaPlugin implements Listener {
 
 		telegramHook = new Telegram();
 		telegramHook.auth(data.getToken());
+		
+		telegramHook.addListener(new BanHandler());
 
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
 			boolean connectionLost = false;
@@ -131,7 +136,7 @@ public class Main extends JavaPlugin implements Listener {
 	private static void sendToMC(UUID uuid, String msg, int sender) {
 		OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
 		List<Integer> recievers = new ArrayList<Integer>();
-		recievers.addAll(Main.data.ids);
+		recievers.addAll(TelegramChat.data.ids);
 		recievers.remove((Object) sender);
 		String msgF = Utils.formatMSG("general-message-to-mc", op.getName(), msg)[0];
 		for (int id : recievers) {
@@ -142,7 +147,7 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public static void link(UUID player, int chatID) {
-		Main.data.addChatPlayerLink(chatID, player);
+		TelegramChat.data.addChatPlayerLink(chatID, player);
 		OfflinePlayer p = Bukkit.getOfflinePlayer(player);
 		telegramHook.sendMsg(chatID, "Success! Linked " + p.getName());
 	}
