@@ -81,7 +81,9 @@ public class Telegram {
 
 					if (update.getMessage() != null) {
 						Chat chat = update.getMessage().getChat();
+		
 						if (chat.isPrivate()) {
+							// private chat
 							if (!TelegramChat.getBackend().ids.contains(chat.getId()))
 								TelegramChat.getBackend().ids.add(chat.getId());
 
@@ -99,30 +101,21 @@ public class Telegram {
 										this.sendMsg(chat2);
 									}
 									this.sendMsg(chat.getId(), Utils.formatMSG("can-see-but-not-chat")[0]);
-								} else if (TelegramChat.getBackend().getLinkCodes().containsKey(text)) {
-									// LINK
-									TelegramChat.link(TelegramChat.getBackend().getUUIDFromLinkCode(text), chat.getId());
-									TelegramChat.getBackend().removeLinkCode(text);
-								} else if (TelegramChat.getBackend().getLinkedChats().containsKey(chat.getId())) {
-									ChatMessageToMc chatMsg = new ChatMessageToMc(
-											TelegramChat.getBackend().getUUIDFromChatID(chat.getId()), text, chat.getId());
-									
-									for (TelegramActionListener actionListener : listeners) {
-										actionListener.onSendToMinecraft(chatMsg);
-									}
-									
-									if(!chatMsg.isCancelled()){
-										TelegramChat.sendToMC(chatMsg);
-									}
 								} else {
-									this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
+									handleUserMessage(text, chat);
 								}
 							}
 
 						} else if (!chat.isPrivate()) {
+							// group chat
 							int id = chat.getId();
 							if (!TelegramChat.getBackend().ids.contains(id))
 								TelegramChat.getBackend().ids.add(id);
+							
+							if (update.getMessage().getText() != null) {
+								String text = update.getMessage().getText();
+								handleUserMessage(text, chat);
+							}
 						}
 					}
 
@@ -130,6 +123,27 @@ public class Telegram {
 			}
 		}
 		return true;
+	}
+	
+	public void handleUserMessage(String text, Chat chat) {
+		if (TelegramChat.getBackend().getLinkCodes().containsKey(text)) {
+			// LINK
+			TelegramChat.link(TelegramChat.getBackend().getUUIDFromLinkCode(text), chat.getId());
+			TelegramChat.getBackend().removeLinkCode(text);
+		} else if (TelegramChat.getBackend().getLinkedChats().containsKey(chat.getId())) {
+			ChatMessageToMc chatMsg = new ChatMessageToMc(
+					TelegramChat.getBackend().getUUIDFromChatID(chat.getId()), text, chat.getId());
+			
+			for (TelegramActionListener actionListener : listeners) {
+				actionListener.onSendToMinecraft(chatMsg);
+			}
+			
+			if(!chatMsg.isCancelled()){
+				TelegramChat.sendToMC(chatMsg);
+			}
+		} else {
+			this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
+		}
 	}
 
 	public void sendMsg(int id, String msg) {
