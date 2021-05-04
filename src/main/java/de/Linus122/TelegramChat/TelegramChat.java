@@ -145,7 +145,7 @@ public class TelegramChat extends JavaPlugin implements Listener {
 		recievers.remove((Object) sender);
 		String msgF = Utils.formatMSG("general-message-to-mc", op.getName(), msg)[0];
 		for (int id : recievers) {
-			telegramHook.sendMsg(id, msgF);
+			telegramHook.sendMsg(id, msgF.replaceAll("§.", ""));
 		}
 		Bukkit.broadcastMessage(msgF.replace("&", "§"));
 
