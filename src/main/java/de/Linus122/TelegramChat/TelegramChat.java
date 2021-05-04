@@ -26,6 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.gson.Gson;
 
 import de.Linus122.Handlers.BanHandler;
+import de.Linus122.Handlers.CommandHandler;
 import de.Linus122.Metrics.Metrics;
 import de.Linus122.Telegram.Telegram;
 import de.Linus122.Telegram.Utils;
@@ -85,7 +86,11 @@ public class TelegramChat extends JavaPlugin implements Listener {
 		telegramHook = new Telegram();
 		telegramHook.auth(data.getToken());
 		
+		// Ban Handler (Prevents banned players from chatting)
 		telegramHook.addListener(new BanHandler());
+		
+		// Console sender handler, allows players to send console commands (telegram.console permission)
+		// telegramHook.addListener(new CommandHandler(telegramHook, this));
 
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
 			boolean connectionLost = false;

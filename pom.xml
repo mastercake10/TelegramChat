@@ -16,17 +16,26 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
+	    <repository>
+	        <id>jitpack.io</id>
+	        <url>https://jitpack.io</url>
+	    </repository>
 	</repositories>
 	
 	<dependencies>
 		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
 			<version>1.12.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+	    <dependency>
+	        <groupId>com.github.MilkBowl</groupId>
+	        <artifactId>VaultAPI</artifactId>
+	        <version>1.7</version>
+	        <scope>provided</scope>
+	    </dependency>
 	</dependencies>
-	
 	<build>
 		<!-- Uses the properties in this file for plugin.yml and config.yml -->
 		<resources>
