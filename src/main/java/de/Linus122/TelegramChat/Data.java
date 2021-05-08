@@ -1,25 +1,20 @@
 package de.Linus122.TelegramChat;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.gson.Gson;
-
 public class Data {
 	private String token = "";
 	
-	// Player name // ChatID
+	// User ID : Player ID
 	private HashMap<Integer, UUID> linkedChats = new HashMap<Integer, UUID>();
 	
-	// Player name // RandomInt
+	// Token : Player ID
 	private HashMap<String, UUID> linkCodes = new HashMap<String, UUID>();
 	
-	public List<Integer> ids = new ArrayList<Integer>();
+	public List<Integer> chat_ids = new ArrayList<Integer>();
 	
 	private boolean firstUse = true;
 	
@@ -32,6 +27,7 @@ public class Data {
 		this.token = token;
 	}
 
+	// chats 
 	public HashMap<Integer, UUID> getLinkedChats() {
 		return linkedChats;
 	}
@@ -49,11 +45,11 @@ public class Data {
 	}
 
 	public List<Integer> getIds() {
-		return ids;
+		return chat_ids;
 	}
 
 	public void setIds(List<Integer> ids) {
-		this.ids = ids;
+		this.chat_ids = ids;
 	}
 
 	public boolean isFirstUse() {
@@ -80,8 +76,8 @@ public class Data {
 		linkCodes.remove(code);
 	}
 
-	public UUID getUUIDFromChatID(int chatID) {
-		return linkedChats.get(chatID);
+	public UUID getUUIDFromUserID(int userID) {
+		return linkedChats.get(userID);
 	}
 
 }

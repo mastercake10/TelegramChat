@@ -81,11 +81,11 @@ public class Telegram {
 
 					if (update.getMessage() != null) {
 						Chat chat = update.getMessage().getChat();
-		
+
 						if (chat.isPrivate()) {
 							// private chat
-							if (!TelegramChat.getBackend().ids.contains(chat.getId()))
-								TelegramChat.getBackend().ids.add(chat.getId());
+							if (!TelegramChat.getBackend().chat_ids.contains(chat.getId()))
+								TelegramChat.getBackend().chat_ids.add(chat.getId());
 
 							if (update.getMessage().getText() != null) {
 								String text = update.getMessage().getText();
@@ -102,19 +102,19 @@ public class Telegram {
 									}
 									this.sendMsg(chat.getId(), Utils.formatMSG("can-see-but-not-chat")[0]);
 								} else {
-									handleUserMessage(text, chat);
+									handleUserMessage(text, update);
 								}
 							}
 
 						} else if (!chat.isPrivate()) {
 							// group chat
 							int id = chat.getId();
-							if (!TelegramChat.getBackend().ids.contains(id))
-								TelegramChat.getBackend().ids.add(id);
+							if (!TelegramChat.getBackend().chat_ids.contains(id))
+								TelegramChat.getBackend().chat_ids.add(id);
 							
 							if (update.getMessage().getText() != null) {
 								String text = update.getMessage().getText();
-								handleUserMessage(text, chat);
+								handleUserMessage(text, update);
 							}
 						}
 					}
@@ -125,14 +125,16 @@ public class Telegram {
 		return true;
 	}
 	
-	public void handleUserMessage(String text, Chat chat) {
+	public void handleUserMessage(String text, Update update) {
+		Chat chat = update.getMessage().getChat();
+		int user_id = update.getMessage().getFrom().getId();
 		if (TelegramChat.getBackend().getLinkCodes().containsKey(text)) {
 			// LINK
-			TelegramChat.link(TelegramChat.getBackend().getUUIDFromLinkCode(text), chat.getId());
+			TelegramChat.link(TelegramChat.getBackend().getUUIDFromLinkCode(text), user_id);
 			TelegramChat.getBackend().removeLinkCode(text);
-		} else if (TelegramChat.getBackend().getLinkedChats().containsKey(chat.getId())) {
+		} else if (TelegramChat.getBackend().getLinkedChats().containsKey(user_id)) {
 			ChatMessageToMc chatMsg = new ChatMessageToMc(
-					TelegramChat.getBackend().getUUIDFromChatID(chat.getId()), text, chat.getId());
+					TelegramChat.getBackend().getUUIDFromUserID(user_id), text, chat.getId());
 			
 			for (TelegramActionListener actionListener : listeners) {
 				actionListener.onSendToMinecraft(chatMsg);
@@ -166,7 +168,7 @@ public class Telegram {
 	public void sendAll(final ChatMessageToTelegram chat) {
 		new Thread(new Runnable() {
 			public void run() {
-				for (int id : TelegramChat.getBackend().ids) {
+				for (int id : TelegramChat.getBackend().chat_ids) {
 					chat.chat_id = id;
 					// post("sendMessage", gson.toJson(chat, Chat.class));
 					sendMsg(chat);

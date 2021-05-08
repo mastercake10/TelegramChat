@@ -30,6 +30,7 @@ import de.Linus122.Handlers.CommandHandler;
 import de.Linus122.Metrics.Metrics;
 import de.Linus122.Telegram.Telegram;
 import de.Linus122.Telegram.Utils;
+import de.Linus122.TelegramComponents.Chat;
 import de.Linus122.TelegramComponents.ChatMessageToMc;
 import de.Linus122.TelegramComponents.ChatMessageToTelegram;
 
@@ -138,11 +139,11 @@ public class TelegramChat extends JavaPlugin implements Listener {
 		sendToMC(chatMsg.getUuid_sender(), chatMsg.getContent(), chatMsg.getChatID_sender());
 	}
 
-	private static void sendToMC(UUID uuid, String msg, int sender) {
+	private static void sendToMC(UUID uuid, String msg, int sender_chat) {
 		OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
 		List<Integer> recievers = new ArrayList<Integer>();
-		recievers.addAll(TelegramChat.data.ids);
-		recievers.remove((Object) sender);
+		recievers.addAll(TelegramChat.data.chat_ids);
+		recievers.remove((Object) sender_chat);
 		String msgF = Utils.formatMSG("general-message-to-mc", op.getName(), msg)[0];
 		for (int id : recievers) {
 			telegramHook.sendMsg(id, msgF.replaceAll("§.", ""));
@@ -151,10 +152,18 @@ public class TelegramChat extends JavaPlugin implements Listener {
 
 	}
 
-	public static void link(UUID player, int chatID) {
-		TelegramChat.data.addChatPlayerLink(chatID, player);
+	public static void link(UUID player, int userID) {
+		TelegramChat.data.addChatPlayerLink(userID, player);
 		OfflinePlayer p = Bukkit.getOfflinePlayer(player);
-		telegramHook.sendMsg(chatID, "Success! Linked " + p.getName());
+		telegramHook.sendMsg(userID, "Success! Linked " + p.getName());
+	}
+	
+	public boolean isChatLinked(Chat chat) {
+		if(TelegramChat.getBackend().getLinkedChats().containsKey(chat.getId())) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	public static String generateLinkToken() {
