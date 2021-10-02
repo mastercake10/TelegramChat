@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import de.Linus122.Handlers.VanishHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -40,16 +41,22 @@ public class TelegramChat extends JavaPlugin implements Listener {
 
 	private static Data data = new Data();
 	public static Telegram telegramHook;
+	private static TelegramChat instance;
 
 	@Override
 	public void onEnable() {
 		this.saveDefaultConfig();
 		cfg = this.getConfig();
+		instance = this;
 		Utils.cfg = cfg;
 
 		Bukkit.getPluginCommand("telegram").setExecutor(new TelegramCmd());
 		Bukkit.getPluginCommand("linktelegram").setExecutor(new LinkTelegramCmd());
 		Bukkit.getPluginManager().registerEvents(this, this);
+
+		if (Bukkit.getPluginManager().isPluginEnabled("SuperVanish") || Bukkit.getPluginManager().isPluginEnabled("PremiumVanish")) {
+			Bukkit.getPluginManager().registerEvents(new VanishHandler(), this);
+		}
 
 		File dir = new File("plugins/TelegramChat/");
 		dir.mkdir();
@@ -236,6 +243,11 @@ public class TelegramChat extends JavaPlugin implements Listener {
 					.replaceAll("§.", "");
 			telegramHook.sendAll(chat);
 		}
+	}
+
+	public static TelegramChat getInstance()
+	{
+		return instance;
 	}
 
 }
