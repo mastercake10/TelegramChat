@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import de.Linus122.Handlers.VanishHandler;
+import de.myzelyam.api.vanish.VanishAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -42,6 +43,7 @@ public class TelegramChat extends JavaPlugin implements Listener {
 	private static Data data = new Data();
 	public static Telegram telegramHook;
 	private static TelegramChat instance;
+	private static boolean isSuperVanish;
 
 	@Override
 	public void onEnable() {
@@ -55,6 +57,7 @@ public class TelegramChat extends JavaPlugin implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, this);
 
 		if (Bukkit.getPluginManager().isPluginEnabled("SuperVanish") || Bukkit.getPluginManager().isPluginEnabled("PremiumVanish")) {
+			isSuperVanish = true;
 			Bukkit.getPluginManager().registerEvents(new VanishHandler(), this);
 		}
 
@@ -197,6 +200,10 @@ public class TelegramChat extends JavaPlugin implements Listener {
 	public void onJoin(PlayerJoinEvent e) {
 		if (!this.getConfig().getBoolean("enable-joinquitmessages"))
 			return;
+
+		if(VanishAPI.isInvisible(e.getPlayer()))
+			return;
+
 		if (telegramHook.connected) {
 			ChatMessageToTelegram chat = new ChatMessageToTelegram();
 			chat.parse_mode = "Markdown";
@@ -221,6 +228,10 @@ public class TelegramChat extends JavaPlugin implements Listener {
 	public void onQuit(PlayerQuitEvent e) {
 		if (!this.getConfig().getBoolean("enable-joinquitmessages"))
 			return;
+
+		if(VanishAPI.isInvisible(e.getPlayer()))
+			return;
+
 		if (telegramHook.connected) {
 			ChatMessageToTelegram chat = new ChatMessageToTelegram();
 			chat.parse_mode = "Markdown";
