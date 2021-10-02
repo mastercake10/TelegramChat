@@ -201,7 +201,7 @@ public class TelegramChat extends JavaPlugin implements Listener {
 		if (!this.getConfig().getBoolean("enable-joinquitmessages"))
 			return;
 
-		if(VanishAPI.isInvisible(e.getPlayer()))
+		if(isSuperVanish && VanishAPI.isInvisible(e.getPlayer()))
 			return;
 
 		if (telegramHook.connected) {
@@ -229,7 +229,7 @@ public class TelegramChat extends JavaPlugin implements Listener {
 		if (!this.getConfig().getBoolean("enable-joinquitmessages"))
 			return;
 
-		if(VanishAPI.isInvisible(e.getPlayer()))
+		if(isSuperVanish && VanishAPI.isInvisible(e.getPlayer()))
 			return;
 
 		if (telegramHook.connected) {
