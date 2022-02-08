@@ -5,9 +5,9 @@ import java.util.UUID;
 public class ChatMessageToMc extends Cancellable {
 	UUID uuid_sender;
 	String content;
-	int chatID_sender;
+	long chatID_sender;
 
-	public ChatMessageToMc(UUID uuid_sender, String content, int chatID_sender) {
+	public ChatMessageToMc(UUID uuid_sender, String content, long chatID_sender) {
 		this.uuid_sender = uuid_sender;
 		this.content = content;
 		this.chatID_sender = chatID_sender;
@@ -29,11 +29,11 @@ public class ChatMessageToMc extends Cancellable {
 		this.content = content;
 	}
 
-	public int getChatID_sender() {
+	public long getChatID_sender() {
 		return chatID_sender;
 	}
 
-	public void setChatID_sender(int chatID_sender) {
+	public void setChatID_sender(long chatID_sender) {
 		this.chatID_sender = chatID_sender;
 	}
 }

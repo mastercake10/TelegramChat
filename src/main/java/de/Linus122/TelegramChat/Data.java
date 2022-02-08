@@ -9,12 +9,12 @@ public class Data {
 	private String token = "";
 	
 	// User ID : Player ID
-	private HashMap<Integer, UUID> linkedChats = new HashMap<Integer, UUID>();
+	private HashMap<Long, UUID> linkedChats = new HashMap<Long, UUID>();
 	
 	// Token : Player ID
 	private HashMap<String, UUID> linkCodes = new HashMap<String, UUID>();
 	
-	public List<Integer> chat_ids = new ArrayList<Integer>();
+	public List<Long> chat_ids = new ArrayList<Long>();
 	
 	private boolean firstUse = true;
 	
@@ -28,11 +28,11 @@ public class Data {
 	}
 
 	// chats 
-	public HashMap<Integer, UUID> getLinkedChats() {
+	public HashMap<Long, UUID> getLinkedChats() {
 		return linkedChats;
 	}
 
-	public void setLinkedChats(HashMap<Integer, UUID> linkedChats) {
+	public void setLinkedChats(HashMap<Long, UUID> linkedChats) {
 		this.linkedChats = linkedChats;
 	}
 
@@ -44,11 +44,11 @@ public class Data {
 		this.linkCodes = linkCodes;
 	}
 
-	public List<Integer> getIds() {
+	public List<Long> getIds() {
 		return chat_ids;
 	}
 
-	public void setIds(List<Integer> ids) {
+	public void setIds(List<Long> ids) {
 		this.chat_ids = ids;
 	}
 
@@ -60,7 +60,7 @@ public class Data {
 		this.firstUse = firstUse;
 	}
 
-	public void addChatPlayerLink(int chatID, UUID player) {
+	public void addChatPlayerLink(long chatID, UUID player) {
 		linkedChats.put(chatID, player);
 	}
 
@@ -76,7 +76,7 @@ public class Data {
 		linkCodes.remove(code);
 	}
 
-	public UUID getUUIDFromUserID(int userID) {
+	public UUID getUUIDFromUserID(long userID) {
 		return linkedChats.get(userID);
 	}
 

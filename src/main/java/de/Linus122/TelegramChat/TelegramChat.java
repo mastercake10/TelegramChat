@@ -149,20 +149,20 @@ public class TelegramChat extends JavaPlugin implements Listener {
 		sendToMC(chatMsg.getUuid_sender(), chatMsg.getContent(), chatMsg.getChatID_sender());
 	}
 
-	private static void sendToMC(UUID uuid, String msg, int sender_chat) {
+	private static void sendToMC(UUID uuid, String msg, long sender_chat) {
 		OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
-		List<Integer> recievers = new ArrayList<Integer>();
+		List<Long> recievers = new ArrayList<Long>();
 		recievers.addAll(TelegramChat.data.chat_ids);
 		recievers.remove((Object) sender_chat);
 		String msgF = Utils.formatMSG("general-message-to-mc", op.getName(), msg)[0];
-		for (int id : recievers) {
+		for (long id : recievers) {
 			telegramHook.sendMsg(id, msgF.replaceAll("§.", ""));
 		}
 		Bukkit.broadcastMessage(msgF.replace("&", "§"));
 
 	}
 
-	public static void link(UUID player, int userID) {
+	public static void link(UUID player, long userID) {
 		TelegramChat.data.addChatPlayerLink(userID, player);
 		OfflinePlayer p = Bukkit.getOfflinePlayer(player);
 		telegramHook.sendMsg(userID, "Success! Linked " + p.getName());
