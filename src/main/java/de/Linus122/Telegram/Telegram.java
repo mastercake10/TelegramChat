@@ -108,7 +108,7 @@ public class Telegram {
 
 						} else if (!chat.isPrivate()) {
 							// group chat
-							int id = chat.getId();
+							long id = chat.getId();
 							if (!TelegramChat.getBackend().chat_ids.contains(id))
 								TelegramChat.getBackend().chat_ids.add(id);
 							
@@ -127,7 +127,7 @@ public class Telegram {
 	
 	public void handleUserMessage(String text, Update update) {
 		Chat chat = update.getMessage().getChat();
-		int user_id = update.getMessage().getFrom().getId();
+		long user_id = update.getMessage().getFrom().getId();
 		if (TelegramChat.getBackend().getLinkCodes().containsKey(text)) {
 			// LINK
 			TelegramChat.link(TelegramChat.getBackend().getUUIDFromLinkCode(text), user_id);
@@ -148,7 +148,7 @@ public class Telegram {
 		}
 	}
 
-	public void sendMsg(int id, String msg) {
+	public void sendMsg(long id, String msg) {
 		ChatMessageToTelegram chat = new ChatMessageToTelegram();
 		chat.chat_id = id;
 		chat.text = msg;
@@ -168,7 +168,7 @@ public class Telegram {
 	public void sendAll(final ChatMessageToTelegram chat) {
 		new Thread(new Runnable() {
 			public void run() {
-				for (int id : TelegramChat.getBackend().chat_ids) {
+				for (long id : TelegramChat.getBackend().chat_ids) {
 					chat.chat_id = id;
 					// post("sendMessage", gson.toJson(chat, Chat.class));
 					sendMsg(chat);
