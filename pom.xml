@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>xyz.spaceio</groupId>
 	<artifactId>telegramchat</artifactId>
-	<version>1.0.17-SNAPSHOT</version>
+	<version>1.0.18-SNAPSHOT</version>
 	<name>TelegramChat</name>
 	<url>https://www.spigotmc.org/resources/telegramchat.16576/</url>
 
@@ -51,16 +51,16 @@
 		</dependency>
 	</dependencies>
 	<distributionManagement>
-		<snapshotRepository>
-			<id>spaceio-snapshots</id>
-			<name>snapshots</name>
-			<url>https://repo.spaceio.xyz/repository/maven-snapshots/</url>
-		</snapshotRepository>
 		<repository>
 			<id>spaceio-releases</id>
 			<name>releases</name>
 			<url>https://repo.spaceio.xyz/repository/maven-releases/</url>
 		</repository>
+		<snapshotRepository>
+			<id>spaceio-snapshots</id>
+			<name>snapshots</name>
+			<url>https://repo.spaceio.xyz/repository/maven-snapshots/</url>
+		</snapshotRepository>
 	</distributionManagement>
 	<build>
 		<!-- Uses the properties in this file for plugin.yml and config.yml -->
