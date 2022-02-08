@@ -27,7 +27,7 @@ import net.milkbowl.vault.permission.Permission;
 public class CommandHandler extends ConsoleHandler implements TelegramActionListener {
 
 	private Permission permissionsAdapter;
-	private int lastChatId = -1;
+	private long lastChatId = -1;
 	private long lastCommandTyped;
 	
 	private Telegram telegram;
