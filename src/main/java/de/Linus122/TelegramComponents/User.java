@@ -1,16 +1,16 @@
 package de.Linus122.TelegramComponents;
 
 public class User {
-	private int id;
+	private long id;
 	private boolean is_bot;
 	private String first_name;
 	private String last_name;
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
