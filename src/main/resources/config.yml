@@ -1,6 +1,6 @@
 messages:
   # telegram messages
-  general-message-to-mc: "&c[Telegram]&r %s: %s"
+  general-message-to-mc: "&cYou got&r %.2f cashback"
   join-message: "`%s joined the game.`"
   quit-message: "`%s left the game.`"
   death-message: "`%s`"
@@ -13,7 +13,10 @@ messages:
   no-permissions: "&cYou don't have permissions to use this!"
   cant-link-console: "&cSorry, but you can't link the console currently."
   need-to-add-bot-first: "&cPlease add a bot to your server first! /telegram"
-  get-token: "&aAdd %s to Telegram and send this message to %s: \n%s"
+  get-token: "&aAdd to Telegram and send this message to the bot: \n%s"
+  need-to-link-telegram-first: "&cPlease link your telegram to the game profile! */linktelegram*"
+  telegram-chat-on: "Telegram message settings have been changed!"
+  telegram-chat-off: "Telegram message settings have been changed!"
 enable-joinquitmessages: true
 enable-deathmessages: true
 enable-chatmessages: true

@@ -1,5 +1,16 @@
 package de.Linus122.Telegram;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import de.Linus122.TelegramChat.TelegramChat;
+import de.Linus122.TelegramComponents.Chat;
+import de.Linus122.TelegramComponents.ChatMessageToMc;
+import de.Linus122.TelegramComponents.ChatMessageToTelegram;
+import de.Linus122.TelegramComponents.Update;
+import org.bukkit.Bukkit;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -11,17 +22,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import de.Linus122.TelegramComponents.ChatMessageToTelegram;
-import de.Linus122.TelegramChat.TelegramChat;
-import de.Linus122.TelegramComponents.Chat;
-import de.Linus122.TelegramComponents.ChatMessageToMc;
-import de.Linus122.TelegramComponents.Update;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Telegram {
 	public JsonObject authJson;
@@ -37,6 +39,8 @@ public class Telegram {
 	private final String API_URL_GENERAL = "https://api.telegram.org/bot%s/%s";
 
 	private Gson gson = new Gson();
+
+	private Set<Long> sentWarnings = ConcurrentHashMap.newKeySet();
 
 	public void addListener(TelegramActionListener actionListener) {
 		listeners.add(actionListener);
@@ -62,7 +66,7 @@ public class Telegram {
 	}
 
 	public boolean getUpdate() {
-		JsonObject up = null;
+		JsonObject up;
 		try {
 			up = sendGet(String.format(API_URL_GETUPDATES, TelegramChat.getBackend().getToken(), lastUpdate + 1));
 		} catch (IOException e) {
@@ -83,33 +87,12 @@ public class Telegram {
 						Chat chat = update.getMessage().getChat();
 
 						if (chat.isPrivate()) {
-							// private chat
-							if (!TelegramChat.getBackend().chat_ids.contains(chat.getId()))
-								TelegramChat.getBackend().chat_ids.add(chat.getId());
-
-							if (update.getMessage().getText() != null) {
-								String text = update.getMessage().getText();
-								if (text.length() == 0)
-									return true;
-								if (text.equals("/start")) {
-									if (TelegramChat.getBackend().isFirstUse()) {
-										TelegramChat.getBackend().setFirstUse(false);
-										ChatMessageToTelegram chat2 = new ChatMessageToTelegram();
-										chat2.chat_id = chat.getId();
-										chat2.parse_mode = "Markdown";
-										chat2.text = Utils.formatMSG("setup-msg")[0];
-										this.sendMsg(chat2);
-									}
-									this.sendMsg(chat.getId(), Utils.formatMSG("can-see-but-not-chat")[0]);
-								} else {
-									handleUserMessage(text, update);
-								}
-							}
+							// skip
 
 						} else if (!chat.isPrivate()) {
 							// group chat
 							long id = chat.getId();
-							if (!TelegramChat.getBackend().chat_ids.contains(id))
+							if (!TelegramChat.getBackend().chat_ids.contains(id) && TelegramChat.getBackend().chat_ids.size() < 1)
 								TelegramChat.getBackend().chat_ids.add(id);
 							
 							if (update.getMessage().getText() != null) {
@@ -127,14 +110,14 @@ public class Telegram {
 	
 	public void handleUserMessage(String text, Update update) {
 		Chat chat = update.getMessage().getChat();
-		long user_id = update.getMessage().getFrom().getId();
+		long chatId = update.getMessage().getFrom().getId();
 		if (TelegramChat.getBackend().getLinkCodes().containsKey(text)) {
 			// LINK
-			TelegramChat.link(TelegramChat.getBackend().getUUIDFromLinkCode(text), user_id);
+			TelegramChat.link(TelegramChat.getBackend().getUUIDFromLinkCode(text), chatId);
 			TelegramChat.getBackend().removeLinkCode(text);
-		} else if (TelegramChat.getBackend().getLinkedChats().containsKey(user_id)) {
+		} else if (TelegramChat.getBackend().containsChatId(chatId)) {
 			ChatMessageToMc chatMsg = new ChatMessageToMc(
-					TelegramChat.getBackend().getUUIDFromUserID(user_id), text, chat.getId());
+					TelegramChat.getBackend().getUUIDFromUserID(chatId), text, chat.getId());
 			
 			for (TelegramActionListener actionListener : listeners) {
 				actionListener.onSendToMinecraft(chatMsg);
@@ -144,7 +127,10 @@ public class Telegram {
 				TelegramChat.sendToMC(chatMsg);
 			}
 		} else {
-			this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
+			if (!sentWarnings.contains(chat.getId())) {
+				this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
+				sentWarnings.add(chat.getId());
+			}
 		}
 	}
 
@@ -166,15 +152,12 @@ public class Telegram {
 	}
 
 	public void sendAll(final ChatMessageToTelegram chat) {
-		new Thread(new Runnable() {
-			public void run() {
-				for (long id : TelegramChat.getBackend().chat_ids) {
-					chat.chat_id = id;
-					// post("sendMessage", gson.toJson(chat, Chat.class));
-					sendMsg(chat);
-				}
+		Bukkit.getScheduler().runTaskAsynchronously(TelegramChat.getInstance(), () -> {
+			for (long id : TelegramChat.getBackend().chat_ids) {
+				chat.chat_id = id;
+				sendMsg(chat);
 			}
-		}).start();
+		});
 	}
 
 	public void post(String method, String json) {

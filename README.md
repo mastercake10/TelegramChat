@@ -41,3 +41,24 @@ TelegramChat is a Bukkit plugin compatible with Paper/Spigot versions 1.7 throug
   </dependency>
 </dependencies>
 ```
+
+## Developers
+* [Jenkins](https://ci.spaceio.xyz/job/TelegramChat/lastBuild/xyz.spaceio$telegramchat/) latest builds, including unstable ones
+* [Repository](https://repo.spaceio.xyz/#browse/browse:maven-snapshots:xyz%2Fspaceio%2Ftelegramchat)
+
+### API
+```xml
+<repository>
+  <id>spaceio-repo</id>
+  <url>https://repo.spaceio.xyz/repository/maven-public/</url>
+</repository>
+
+<dependencies>
+  <dependency>
+    <groupId>xyz.spaceio</groupId>
+    <artifactId>telegramchat</artifactId>
+    <version>VERSION_HERE-SNAPSHOT</version>
+    <scope>provided</scope>
+  </dependency>
+</dependencies>
+```

@@ -1,9 +1,12 @@
 package de.Linus122.TelegramChat;
 
-import java.util.ArrayList;
+import de.Linus122.entity.User;
+import de.Linus122.repository.UserRepository;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Data {
 	private String token = "";
@@ -14,10 +17,10 @@ public class Data {
 	// Token : Player ID
 	private HashMap<String, UUID> linkCodes = new HashMap<String, UUID>();
 	
-	public List<Long> chat_ids = new ArrayList<Long>();
+	public List<Long> chat_ids = new CopyOnWriteArrayList<>();
 	
 	private boolean firstUse = true;
-	
+
 
 	public String getToken() {
 		return token;
@@ -61,7 +64,21 @@ public class Data {
 	}
 
 	public void addChatPlayerLink(long chatID, UUID player) {
-		linkedChats.put(chatID, player);
+		final User toUpdate = UserRepository.getInstance().readByPlayerId(player.toString())
+				.orElseGet(() -> {
+					final User user = new User();
+					user.setChatId(chatID);
+					user.setPlayerId(player.toString());
+					return user;
+				});
+		toUpdate.setChatId(chatID);
+		UserRepository.getInstance().update(toUpdate);
+	}
+
+	public boolean containsChatId(long chatId) {
+		return UserRepository.getInstance()
+				.readByChatId(chatId)
+				.isPresent();
 	}
 
 	public void addLinkCode(String code, UUID player) {
@@ -77,7 +94,13 @@ public class Data {
 	}
 
 	public UUID getUUIDFromUserID(long userID) {
-		return linkedChats.get(userID);
+		return UserRepository.getInstance()
+				.readByChatId(userID)
+				.map(User::getPlayerId)
+				.map(UUID::fromString)
+				.orElseThrow(() -> new IllegalArgumentException(String.format("Chat with id %s not found", userID)));
 	}
+
+
 
 }
