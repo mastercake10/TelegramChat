@@ -3,10 +3,10 @@ package de.Linus122.TelegramChat;
 import de.Linus122.entity.User;
 import de.Linus122.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Data {
 	private String token = "";
@@ -17,7 +17,7 @@ public class Data {
 	// Token : Player ID
 	private HashMap<String, UUID> linkCodes = new HashMap<String, UUID>();
 	
-	public List<Long> chat_ids = new ArrayList<Long>();
+	public List<Long> chat_ids = new CopyOnWriteArrayList<>();
 	
 	private boolean firstUse = true;
 
