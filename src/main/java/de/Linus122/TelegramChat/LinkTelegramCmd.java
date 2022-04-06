@@ -1,13 +1,10 @@
 package de.Linus122.TelegramChat;
 
-import java.io.IOException;
-
+import de.Linus122.Telegram.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import de.Linus122.Telegram.Utils;
 
 public class LinkTelegramCmd implements CommandExecutor {
 
@@ -30,9 +27,7 @@ public class LinkTelegramCmd implements CommandExecutor {
 
 		String token = TelegramChat.generateLinkToken();
 		TelegramChat.getBackend().addLinkCode(token, ((Player) cs).getUniqueId());
-		cs.sendMessage(Utils.formatMSG("get-token",
-				TelegramChat.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString(),
-				TelegramChat.telegramHook.authJson.getAsJsonObject("result").get("username").getAsString(), token));
+		cs.sendMessage(Utils.formatMSG("get-token", token));
 
 		return true;
 	}

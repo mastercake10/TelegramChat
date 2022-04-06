@@ -2,7 +2,7 @@ name: TelegramChat
 main: de.Linus122.TelegramChat.TelegramChat
 version: ${project.version}
 authors: [Linus122]
-softdepend: [Vault, SuperVanish, PremiumVanish]
+softdepend: [Vault, SuperVanish, PremiumVanish, Chatty]
 description: Brings minecraft chat to Telegram!
 commands:
    telegram:
@@ -11,5 +11,21 @@ commands:
       permission: telegram.settoken
    linktelegram:
       description: Main command
+      usage: /<command>
+      permission: telegram.linktelegram
+   tgon:
+      description: Turn on telegram messages
+      usage: /<command>
+      permission: telegram.linktelegram
+   tgoff:
+      description: Turn off telegram messages
+      usage: /<command>
+      permission: telegram.linktelegram
+   tgon:
+      description: Turn on telegram messages
+      usage: /<command>
+      permission: telegram.linktelegram
+   tgoff:
+      description: Turn off telegram messages
       usage: /<command>
       permission: telegram.linktelegram

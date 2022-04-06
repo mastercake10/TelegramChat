@@ -1,5 +1,8 @@
 package de.Linus122.TelegramChat;
 
+import de.Linus122.entity.User;
+import de.Linus122.repository.UserRepository;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +20,7 @@ public class Data {
 	public List<Long> chat_ids = new ArrayList<Long>();
 	
 	private boolean firstUse = true;
-	
+
 
 	public String getToken() {
 		return token;
@@ -61,7 +64,21 @@ public class Data {
 	}
 
 	public void addChatPlayerLink(long chatID, UUID player) {
-		linkedChats.put(chatID, player);
+		final User toUpdate = UserRepository.getInstance().readByPlayerId(player.toString())
+				.orElseGet(() -> {
+					final User user = new User();
+					user.setChatId(chatID);
+					user.setPlayerId(player.toString());
+					return user;
+				});
+		toUpdate.setChatId(chatID);
+		UserRepository.getInstance().update(toUpdate);
+	}
+
+	public boolean containsChatId(long chatId) {
+		return UserRepository.getInstance()
+				.readByChatId(chatId)
+				.isPresent();
 	}
 
 	public void addLinkCode(String code, UUID player) {
@@ -77,7 +94,13 @@ public class Data {
 	}
 
 	public UUID getUUIDFromUserID(long userID) {
-		return linkedChats.get(userID);
+		return UserRepository.getInstance()
+				.readByChatId(userID)
+				.map(User::getPlayerId)
+				.map(UUID::fromString)
+				.orElseThrow(() -> new IllegalArgumentException(String.format("Chat with id %s not found", userID)));
 	}
+
+
 
 }

@@ -20,7 +20,7 @@ public class TelegramCmd implements CommandExecutor {
 			TelegramChat.initBackend();
 		}
 		TelegramChat.getBackend().setToken(args[0]);
-		TelegramChat.save();
+//		TelegramChat.save();
 		boolean success = false;
 
 		success = TelegramChat.telegramHook.auth(TelegramChat.getBackend().getToken());
