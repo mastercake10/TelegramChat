@@ -109,14 +109,10 @@ public class TelegramChat extends JavaPlugin implements Listener {
 		// telegramHook.addListener(new CommandHandler(telegramHook, this));
 
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-			boolean connectionLost = false;
-			if (connectionLost) {
-				boolean success = telegramHook.reconnect();
-				if (success)
-					connectionLost = false;
-			}
 			if (telegramHook.connected) {
-				connectionLost = !telegramHook.getUpdate();
+				telegramHook.getUpdate();
+			} else {
+				telegramHook.reconnect();
 			}
 		}, 10L, 10L);
 

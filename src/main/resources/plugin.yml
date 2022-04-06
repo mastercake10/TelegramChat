@@ -21,11 +21,3 @@ commands:
       description: Turn off telegram messages
       usage: /<command>
       permission: telegram.linktelegram
-   tgon:
-      description: Turn on telegram messages
-      usage: /<command>
-      permission: telegram.linktelegram
-   tgoff:
-      description: Turn off telegram messages
-      usage: /<command>
-      permission: telegram.linktelegram
