@@ -17,3 +17,6 @@ messages:
 enable-joinquitmessages: true
 enable-deathmessages: true
 enable-chatmessages: true
+
+# this will prevent mass-sending unsent messages from telegram to mc upon server startup
+omit-messages-sent-while-server-was-offline: true

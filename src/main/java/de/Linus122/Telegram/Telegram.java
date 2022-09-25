@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.Linus122.TelegramComponents.ChatMessageToTelegram;
+import de.Linus122.TelegramComponents.Message;
 import de.Linus122.TelegramChat.TelegramChat;
 import de.Linus122.TelegramComponents.Chat;
 import de.Linus122.TelegramComponents.ChatMessageToMc;
@@ -28,6 +29,8 @@ public class Telegram {
 	public boolean connected = false;
 
 	static int lastUpdate = 0;
+	private boolean firstUpdate = true;
+	
 	public String token;
 
 	private List<TelegramActionListener> listeners = new ArrayList<TelegramActionListener>();
@@ -75,19 +78,22 @@ public class Telegram {
 			for (JsonElement ob : up.getAsJsonArray("result")) {
 				if (ob.isJsonObject()) {
 					Update update = gson.fromJson(ob, Update.class);
-		
+					
+
 					if(lastUpdate == update.getUpdate_id()) return true;
 					lastUpdate = update.getUpdate_id();
+					Message message = update.getMessage();
+					
 
-					if (update.getMessage() != null) {
-						Chat chat = update.getMessage().getChat();
+					if (message != null) {
+						Chat chat = message.getChat();
 
 						if (chat.isPrivate()) {
 							// private chat
 							if (!TelegramChat.getBackend().chat_ids.contains(chat.getId()))
 								TelegramChat.getBackend().chat_ids.add(chat.getId());
 
-							if (update.getMessage().getText() != null) {
+							if (message.getText() != null) {
 								String text = update.getMessage().getText();
 								if (text.length() == 0)
 									return true;
@@ -121,6 +127,7 @@ public class Telegram {
 
 				}
 			}
+			firstUpdate = false;
 		}
 		return true;
 	}
@@ -141,7 +148,13 @@ public class Telegram {
 			}
 			
 			if(!chatMsg.isCancelled()){
-				TelegramChat.sendToMC(chatMsg);
+				boolean skipFirstMessages = TelegramChat.getInstance().getConfig().getBoolean("omit-messages-sent-while-server-was-offline");
+				
+				if(!(skipFirstMessages && firstUpdate)) {
+					TelegramChat.sendToMC(chatMsg);		
+				} else {
+					TelegramChat.getInstance().getLogger().info("Omitted message Telegram->MC because it was sent while the server was offline.");
+				}
 			}
 		} else {
 			this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
