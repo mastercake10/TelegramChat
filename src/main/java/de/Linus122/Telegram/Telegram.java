@@ -175,12 +175,7 @@ public class Telegram {
 		for (TelegramActionListener actionListener : listeners) {
 			actionListener.onSendToTelegram(chat);
 		}
-		boolean turnNotificationToSilent = TelegramChat.getInstance().getConfig().getBoolean("turn-to-silent-notification");
-		if(turnNotificationToSilent) {
-			chat.disable_notification = true;
-		} else {
-			chat.disable_notification = false;
-		}
+		chat.disable_notification = TelegramChat.getInstance().getConfig().getBoolean("turn-to-silent-notification");
 		
 		Gson gson = new Gson();
 		if(!chat.isCancelled()){
