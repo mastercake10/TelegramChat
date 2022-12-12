@@ -5,4 +5,4 @@
 .project
 .classpath
 .settings/
-.settings2/
+*.prefs
