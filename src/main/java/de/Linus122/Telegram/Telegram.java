@@ -156,14 +156,13 @@ public class Telegram {
 					TelegramChat.getInstance().getLogger().info("Omitted message Telegram->MC because it was sent while the server was offline.");
 				}
 			}
-		} else {
-			this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
 		}
 	}
 
 	public void sendMsg(long id, String msg) {
 		ChatMessageToTelegram chat = new ChatMessageToTelegram();
 		chat.chat_id = id;
+		chat.disable_notification = true;
 		chat.text = msg;
 		sendMsg(chat);
 	}
@@ -183,6 +182,7 @@ public class Telegram {
 			public void run() {
 				for (long id : TelegramChat.getBackend().chat_ids) {
 					chat.chat_id = id;
+					chat.disable_notification = true;
 					// post("sendMessage", gson.toJson(chat, Chat.class));
 					sendMsg(chat);
 				}
