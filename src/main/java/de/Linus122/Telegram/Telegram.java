@@ -157,7 +157,10 @@ public class Telegram {
 				}
 			}
 		} else {
-			this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
+			boolean skipIfNeedToLinkSilent = TelegramChat.getInstance().getConfig().getBoolean("omit-messages-need-to-link");
+			if (!skipIfNeedToLinkSilent) {
+				this.sendMsg(chat.getId(), Utils.formatMSG("need-to-link")[0]);
+			}
 		}
 	}
 
@@ -172,6 +175,8 @@ public class Telegram {
 		for (TelegramActionListener actionListener : listeners) {
 			actionListener.onSendToTelegram(chat);
 		}
+		chat.disable_notification = TelegramChat.getInstance().getConfig().getBoolean("turn-to-silent-notification");
+		
 		Gson gson = new Gson();
 		if(!chat.isCancelled()){
 			post("sendMessage", gson.toJson(chat, ChatMessageToTelegram.class));	

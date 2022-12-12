@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>xyz.spaceio</groupId>
 	<artifactId>telegramchat</artifactId>
-	<version>1.0.19-SNAPSHOT</version>
+	<version>1.0.20-SNAPSHOT</version>
 	<name>TelegramChat</name>
 	<url>https://www.spigotmc.org/resources/telegramchat.16576/</url>
 

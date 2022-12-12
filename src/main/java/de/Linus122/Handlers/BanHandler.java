@@ -2,7 +2,6 @@ package de.Linus122.Handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import de.Linus122.Telegram.TelegramActionListener;
 import de.Linus122.TelegramComponents.ChatMessageToMc;

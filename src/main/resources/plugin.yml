@@ -1,7 +1,7 @@
 name: TelegramChat
 main: de.Linus122.TelegramChat.TelegramChat
 version: ${project.version}
-authors: [Linus122]
+authors: [Linus122, Arthessia]
 softdepend: [Vault, SuperVanish, PremiumVanish]
 description: Brings minecraft chat to Telegram!
 commands:
