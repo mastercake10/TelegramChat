@@ -1,25 +1,16 @@
 package de.Linus122.Handlers;
 
-import java.security.Permissions;
-import java.util.Arrays;
-import java.util.Locale;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import de.Linus122.Telegram.Telegram;
 import de.Linus122.Telegram.TelegramActionListener;
-import de.Linus122.TelegramChat.TelegramChat;
 import de.Linus122.TelegramComponents.ChatMessageToMc;
 import de.Linus122.TelegramComponents.ChatMessageToTelegram;
 import net.milkbowl.vault.permission.Permission;
