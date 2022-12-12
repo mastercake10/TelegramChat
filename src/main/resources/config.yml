@@ -20,3 +20,5 @@ enable-chatmessages: true
 
 # this will prevent mass-sending unsent messages from telegram to mc upon server startup
 omit-messages-sent-while-server-was-offline: true
+omit-messages-need-to-link: false
+turn-to-silent-notification: false
