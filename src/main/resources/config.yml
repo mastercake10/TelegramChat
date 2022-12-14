@@ -4,6 +4,7 @@ messages:
   join-message: "`%s joined the game.`"
   quit-message: "`%s left the game.`"
   death-message: "`%s`"
+  advancement-message: "`%s obtained advancement %s! GG!`"
   need-to-link: "Sorry, please link your account with */linktelegram ingame* to use the chat!"
   can-see-but-not-chat: "You can see the chat but you can't chat at the moment. Type */linktelegram ingame* to chat!"
   success-linked: "Success! Linked %s"
@@ -17,6 +18,10 @@ messages:
 enable-joinquitmessages: true
 enable-deathmessages: true
 enable-chatmessages: true
+enable-advancement: true
+
+# this will describe all types of advancements you want to be send on your telegram chat, be careful with 'recipes' type which can spam
+advancement-types: "adventure,husbandry,story,nether,end"
 
 # this will prevent mass-sending unsent messages from telegram to mc upon server startup
 omit-messages-sent-while-server-was-offline: true
